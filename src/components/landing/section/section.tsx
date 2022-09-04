@@ -13,7 +13,7 @@ interface SectionProps {
 
 const Section: FC<SectionProps> = ({ image, sectionHeading, textContent, imagePosition }) => {
   return (
-    <section className="text-gray-600 body-font">
+    <section className="text-gray-600 dark:text-zinc-300 body-font">
       <div
         className={`container flex ${
           imagePosition === 'right' ? 'md:flex-row-reverse' : 'md:flex-row'
