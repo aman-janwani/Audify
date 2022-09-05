@@ -25,10 +25,8 @@ const ExplorePage = () => {
   const [highlightedId, setHighlightedId] = useState<string>("");
   const [purchaseInProgress, setPurchaseInProgress] = useState(false);
   const [rerender, triggerRerender] = useState(false);
-  const [allAudiobooks, setAllAudiobooks] = useState<IAudiobookData[]>([]);
-  const [filteredAudiobooks, setFilteredAudiobooks] = useState<
-    IAudiobookData[]
-  >([]);
+  const [allAudiobooks, setAllAudiobooks] = useState([]);
+  const [filteredAudiobooks, setFilteredAudiobooks] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const router = useRouter();
