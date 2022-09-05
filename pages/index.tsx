@@ -1,4 +1,4 @@
-import { ConnectWallet } from "@3rdweb/react";
+import { ConnectWallet } from '@thirdweb-dev/react';
 import { NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
@@ -70,14 +70,11 @@ const LandingPage: NextPage = () => {
         <div className="w-full py-24 mb-24">
           <div className="flex flex-col items-start max-w-4xl m-auto">
             <p
-              className="flex flex-col items-start mb-16 font-extrabold tracking-tight uppercase text-8xl glowing-text"
-              style={{
-                fontFamily: "Inter, sans-serif",
-              }}
+              className="flex font-raleway flex-col items-start mb-16 font-extrabold tracking-tight uppercase text-8xl glowing-text"
             >
               <span>Experience</span>
-              <span>Premium</span>
-              <span>Story-telling</span>
+              <span>PREMIUM</span>
+              <span>LISTENING</span>
             </p>
             <Link href="/explore" passHref>
               <button className="inline-flex items-center justify-center p-0.5 mb-2 border-pink-500 border rounded-lg hover:scale-105 transition-transform">

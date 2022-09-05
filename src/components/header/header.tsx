@@ -1,4 +1,4 @@
-import { ConnectWallet } from '@3rdweb/react';
+import { ConnectWallet } from '@thirdweb-dev/react';
 import Link from 'next/link';
 import React from 'react';
 import Button from '../button/button';
@@ -24,7 +24,7 @@ const Header = () => (
                         My Audiobooks
                     </Button>
                 </Link>
-                <ConnectWallet className="" />
+                <ConnectWallet />
             </div>
         </div>
     </div>

@@ -7,17 +7,19 @@ import {
   useState,
 } from "react";
 import PurchaseCard from "../../src/components/purchase-card/purchasecard";
-import { AppWeb3Context } from "../../src/provider/app-web3";
-import { getAllAudiobooks, purchaseAudiobook } from "../../src/services/web3";
+// import { AppWeb3Context } from "../../src/provider/app-web3";
+// import { getAllAudiobooks, purchaseAudiobook } from "../../src/services/web3";
 import SearchBox from "../../src/components/search-box";
 import { IAudiobookData } from "../../src/models/audify";
 
-import PageLayout from "../../src/layouts/page-layout";
+// import PageLayout from "../../src/layouts/page-layout";
 import { toast } from "react-toastify";
 import Modal from "../../src/components/modal/modal";
 import LoadingAudioCard from "../../src/components/audio-card/loading-state";
 import Image from "next/image";
 import useDarkMode from "../../src/hooks/useDarkMode";
+import { useEditionDrop, useNFTCollection, useNFTs } from "@thirdweb-dev/react";
+import { useRouter } from "next/router";
 
 const ExplorePage = () => {
   const [highlightedId, setHighlightedId] = useState<string>("");
@@ -29,129 +31,139 @@ const ExplorePage = () => {
   >([]);
   const [loading, setLoading] = useState(false);
 
-  const { dropBundleModule } = useContext(AppWeb3Context);
+  const router = useRouter();
+
+  // const { dropBundleModule } = useContext(AppWeb3Context);
   const [colorTheme, setTheme] = useDarkMode();
 
+  const editionDrop = useEditionDrop(
+    "0x3B4451282445e803db437ede3fA1EA9f4Bfd2A79"
+  );
+
+  const aman = useNFTCollection("0x3B4451282445e803db437ede3fA1EA9f4Bfd2A79");
+  const { data: nfts } = useNFTs(aman);
 
   useEffect(() => {
-    (async () => {
-      if (!dropBundleModule) return;
-
-      setLoading(true);
-      const allNFTs = await getAllAudiobooks(dropBundleModule);
-
-      if (allNFTs) {
-        setAllAudiobooks(allNFTs);
-        setFilteredAudiobooks(allNFTs);
-      }
-
-      setLoading(false);
-    })();
-  }, [dropBundleModule, rerender]);
-
-  const handlePurchase = async (
-    name: string,
-    tokenId: string,
-    quantity: number = 1
-  ) => {
-    if (!dropBundleModule) return;
-
-    try {
-      setPurchaseInProgress(true);
-
-      await purchaseAudiobook(dropBundleModule, tokenId, quantity);
-      toast.success("Successfully purchased", {
-        position: "bottom-right",
-      });
-
-      triggerRerender(!rerender);
-      highlightCard(tokenId);
-    } catch (error) {
-      toast.error("Purchase failed!", {
-        position: "bottom-right",
-      });
-    } finally {
-      setPurchaseInProgress(false);
+    if (nfts) {
+      setAllAudiobooks(nfts);
+      setFilteredAudiobooks(nfts);
     }
-  };
+  }, [nfts]);
 
-  const handleSearch = (query: string) => {
-    const filteredAudiobooks = allAudiobooks.filter((ab) => {
-      const lowercaseQuery = query.toLowerCase();
+  console.log("aman", allAudiobooks);
+  
 
-      return (
-        (ab.name as string).toLowerCase().includes(lowercaseQuery) ||
-        (ab.desc as string).toLowerCase().includes(lowercaseQuery) ||
-        (ab.writtenBy as string).toLowerCase().includes(lowercaseQuery)
-      );
-    });
+  // useEffect(() => {
+  //   (async () => {
+  //     if (!dropBundleModule) return;
 
-    setFilteredAudiobooks(filteredAudiobooks);
-  };
+  //     setLoading(true);
+  //     const allNFTs = await getAllAudiobooks(dropBundleModule);
 
-  const highlightCard = (id: string) => {
-    setHighlightedId(id);
-    setTimeout(() => setHighlightedId(""), 3500);
-  };
+  //     if (allNFTs) {
+  //       setAllAudiobooks(allNFTs);
+  //       setFilteredAudiobooks(allNFTs);
+  //     }
 
-  const getHighlightClassIfAny = (id: string) => {
-    if (!highlightedId) return "";
-    return highlightedId === id
-      ? "animate-highlight-once ring ring-indigo-500 ring-offset-1"
-      : "";
-  };
+  //     setLoading(false);
+  //   })();
+  // }, [dropBundleModule, rerender]);
 
-  const renderAllAudiobooks = () => {
-    if (loading && filteredAudiobooks.length === 0) {
-      return (
-        <div className="grid grid-cols-[repeat(auto-fill,_minmax(240px,_1fr))] gap-8">
-          <LoadingAudioCard />
-          <LoadingAudioCard />
-          <LoadingAudioCard />
-          <LoadingAudioCard />
-        </div>
-      );
-    } else if (allAudiobooks.length !== 0 && filteredAudiobooks.length === 0) {
-      return (
-        <div className="grid w-full p-8 place-content-center">
-          <div className="w-[400px]">
-            <Image
-              width={"100%"}
-              height={"100%"}
-              layout="responsive"
-              className="object-center"
-              alt="hero"
-              src={"/images/no-data.svg"}
-            />
-          </div>
-        </div>
-      );
-    } else {
-      return (
-        <div className="grid grid-cols-[repeat(auto-fill,_minmax(240px,_1fr))] gap-8">
-          {filteredAudiobooks.map((ab) => (
-            <div key={ab.id}>
-              <PurchaseCard
-                data={ab}
-                onPurchase={handlePurchase}
-                className={getHighlightClassIfAny(ab.id)}
-              />
-            </div>
-          ))}
-        </div>
-      );
-    }
-  };
+  // const handlePurchase = async (
+  //   name: string,
+  //   tokenId: string,
+  //   quantity: number = 1
+  // ) => {
+  //   if (!dropBundleModule) return;
+
+  //   try {
+  //     setPurchaseInProgress(true);
+
+  //     await purchaseAudiobook(dropBundleModule, tokenId, quantity);
+  //     toast.success("Successfully purchased", {
+  //       position: "bottom-right",
+  //     });
+
+  //     triggerRerender(!rerender);
+  //     highlightCard(tokenId);
+  //   } catch (error) {
+  //     toast.error("Purchase failed!", {
+  //       position: "bottom-right",
+  //     });
+  //   } finally {
+  //     setPurchaseInProgress(false);
+  //   }
+  // };
+
+  // const handleSearch = (query: string) => {
+  //   const filteredAudiobooks = allAudiobooks.filter((audiobook) => audiobook.name.toLowerCase().includes(query.toLowerCase()));
+
+  //   setFilteredAudiobooks(filteredAudiobooks);
+  // };
+
+  // const highlightCard = (id: string) => {
+  //   setHighlightedId(id);
+  //   setTimeout(() => setHighlightedId(""), 3500);
+  // };
+
+  // const getHighlightClassIfAny = (id: string) => {
+  //   if (!highlightedId) return "";
+  //   return highlightedId === id
+  //     ? "animate-highlight-once ring ring-indigo-500 ring-offset-1"
+  //     : "";
+  // };
+
+  // const renderAllAudiobooks = () => {
+  //   if (loading && filteredAudiobooks.length === 0) {
+  //     return (
+  //       <div className="grid grid-cols-[repeat(auto-fill,_minmax(240px,_1fr))] gap-8">
+  //         <LoadingAudioCard />
+  //         <LoadingAudioCard />
+  //         <LoadingAudioCard />
+  //         <LoadingAudioCard />
+  //       </div>
+  //     );
+  //   } else if (allAudiobooks.length !== 0 && filteredAudiobooks.length === 0) {
+  //     return (
+  //       <div className="grid w-full p-8 place-content-center">
+  //         <div className="w-[400px]">
+  //           <Image
+  //             width={"100%"}
+  //             height={"100%"}
+  //             layout="responsive"
+  //             className="object-center"
+  //             alt="hero"
+  //             src={"/images/no-data.svg"}
+  //           />
+  //         </div>
+  //       </div>
+  //     );
+  //   } else {
+  //     return (
+  //       <div className="grid grid-cols-[repeat(auto-fill,_minmax(240px,_1fr))] gap-8">
+  //         {filteredAudiobooks.map((ab) => (
+  //           <div key={ab.id}>
+  //             <PurchaseCard
+  //               data={ab}
+  //               onPurchase={handlePurchase}
+  //               className={getHighlightClassIfAny(ab.id)}
+  //             />
+  //           </div>
+  //         ))}
+  //       </div>
+  //     );
+  //   }
+  // };
 
   return (
-    <div className="dark:bg-zinc-900 h-screen">
+    <div className="dark:bg-zinc-900 bg-white">
       <Head>
         <title>Audiobooks - Explore</title>
         <meta name="description" content="Audiobooks - Explore" />
       </Head>
       <div className="w-full mb-8 flex bg-gray-100 dark:bg-zinc-800 shadow-inner h-30">
         <div className="relative w-full -bottom-7">
-          <SearchBox onSearch={handleSearch} />
+          {/* <SearchBox onSearch={handleSearch} /> */}
         </div>
         {colorTheme === "light" ? (
           <svg
@@ -191,7 +203,33 @@ const ExplorePage = () => {
         <h2 className="mb-8 text-3xl font-semibold text-gray-800 dark:text-gray-200 ">
           All Audiobooks
         </h2>
-        {renderAllAudiobooks()}
+        {filteredAudiobooks.length !== 0 && (
+          <div className="flex space-x-5">
+            {filteredAudiobooks?.map((nft, index) => (
+              <div
+                key={nft.metadata.name}
+                className="dark:bg-zinc-800 dark:text-white h-fit max-w-xs flex flex-col space-y-3 rounded-lg"
+              >
+                <div className="w-[20rem] h-[23rem] rounded-t-lg relative">
+                  <Image
+                    src={nft.metadata.image}
+                    layout="fill"
+                    className=" rounded-t-lg"
+                  />
+                </div>
+                <p className="dark:bg-zinc-700 bg-slate-100 flex items-center justify-center rounded-full mx-3 font-medium w-10">#{index}</p>
+                <div className="px-5 py-5">
+                  <p className="font-bold text-lg">{nft.metadata.name}</p>
+                  <p className="truncate">{nft.metadata.description}</p>
+                </div>
+                {/* <p>~{nft.metadata.name}</p> */}
+                  <button onClick={() => {
+                    router.push(`/owned/${index}`)
+                  }} className="bg-blue-400 w-full p-3 rounded-b-lg text-white font-medium hover:bg-blue-500 duration-300">Purchase</button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {purchaseInProgress && (
@@ -207,6 +245,6 @@ const ExplorePage = () => {
 
 export default ExplorePage;
 
-ExplorePage.getLayout = function getLayout(page: ReactElement) {
-  return <PageLayout>{page}</PageLayout>;
-};
+// ExplorePage.getLayout = function getLayout(page: ReactElement) {
+//   return <PageLayout>{page}</PageLayout>;
+// };

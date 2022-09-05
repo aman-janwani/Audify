@@ -7,6 +7,10 @@ module.exports = {
               blob: 'blob 7s infinite',
               'highlight-once': 'highlight-once 1s 3 ease-in-out',
           },
+          fontFamily: {
+            'raleway': ["Raleway", "sans-serif"],
+            'Satisfy': ["Satisfy"],
+          },
           keyframes: {
               blob: {
                   '0%': {
