@@ -156,7 +156,7 @@ const ExplorePage = () => {
   return (
     <div className="dark:bg-zinc-900 bg-white">
       <Head>
-        <title>Audiobooks - Explore</title>
+        <title>Audiobooks | Explore</title>
         <meta name="description" content="Audiobooks - Explore" />
       </Head>
       <div className="w-full mb-8 flex bg-gray-100 dark:bg-zinc-800 shadow-inner h-30">
