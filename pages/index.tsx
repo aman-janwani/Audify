@@ -12,7 +12,7 @@ const LandingPage: NextPage = () => {
   return (
     <div className="dark:bg-zinc-900">
       <Head>
-        <title>Audify</title>
+        <title>Audify | Home</title>
         <meta name="description" content="Audiobooks" />
       </Head>
 
